@@ -15,4 +15,4 @@ Cliqmore is one of the best inventions of this century, the system allows buyers
 Thank you for considering contributing to the Cliqmore store API!
 ## Security Vulnerabilities
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Adebambo Adenuga via [adenugaadebambo41@gmail.com](mailto:adenugaadebambo41@gmail.com). All security vulnerabilities will be promptly addressed.
+If you discover a security vulnerability within Cliqmore, please send an e-mail to Adebambo Adenuga via [adenugaadebambo41@gmail.com](mailto:adenugaadebambo41@gmail.com). All security vulnerabilities will be promptly addressed.
