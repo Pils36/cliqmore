@@ -1,4 +1,4 @@
-<p align="center">CLIQMORE</p>
+<p align="center"><img src="https://res.cloudinary.com/pilstech/image/upload/v1608290818/cart_ezrfwp.jpg"></p>
 
 
 ## About Cliqmore
