@@ -1,4 +1,4 @@
-<p align="center"><img src="https://res.cloudinary.com/pilstech/image/upload/v1608290818/cart_ezrfwp.jpg"></p>
+<p align="center"><img src="https://img.icons8.com/fluent/48/000000/shopping-cart.png"/></p>
 
 
 ## About Cliqmore
