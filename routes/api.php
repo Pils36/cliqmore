@@ -175,6 +175,20 @@ Route::group(['prefix' => '/'], function(){
 	// CALLBACK
 	Route::get('payment/callback', ['uses' => 'api\v1\PaymentController@handleGatewayCallback']);
 
+
+
+	// Bank Transactions and Money Transfers
+
+	Route::get('bankinformation', ['uses' => 'api\v1\PaymentController@saveBanks']);
+
+	Route::get('allbanks', ['uses' => 'api\v1\PaymentController@getallBanks']);
+
+	Route::post('validateaccountnumber', ['uses' => 'api\v1\PaymentController@validateAccountNumber']);
+
+	// Transfer Money
+	Route::post('createrecipient', ['uses' => 'api\v1\SuperAdminController@transferRecipient']);
+
+	Route::post('transfermoney', ['uses' => 'api\v1\SuperAdminController@transferMoney']);
 });
 
 

@@ -11,6 +11,7 @@ use App\Checkout as Checkout;
 use App\Products as Products;
 use App\ProductSale as ProductSale;
 use App\Payment as Payment;
+use App\Banks as Banks;
 
 use App\Http\Controllers\Controller;
 
@@ -91,6 +92,8 @@ class PaymentController extends Controller
     
                         $this->ordersMade($value->user_id, $value->product_id, 'card payment', $amount, 'open', $merchant[0]->merchant_id, $value->quantity, $myaddress);
 
+                        $this->notifyMerchant($value->product_id, $merchant[0]->merchant_id, $amount);
+
                         $this->updateCartinfo($value->user_id, $value->product_id);
 
     
@@ -165,6 +168,14 @@ class PaymentController extends Controller
     }
 
 
+    public function notifyMerchant($product_id, $merchant_id, $amount){
+        // Insert to Notification Table
+
+        // Send merchant mail for new purchase and to confirm order
+        
+    }
+
+
     public function paymentMade($transaction_id, $customer_id, $product_id, $merchant_id, $amount){
         Payment::insert(['transaction_id' => $transaction_id, 'customer_id' => $customer_id, 'product_id' => $product_id, 'merchant_id' => $merchant_id, 'amount' => $amount]);
 
@@ -189,6 +200,112 @@ class PaymentController extends Controller
         }
 
     }
+
+
+    // Get Banks Information
+    public function getallBanks(){
+        $allbanks = Banks::orderBy('name', 'DESC')->get();
+
+        $resData = ['data' => $allbanks,'message' => "success", 'status' => 200];
+        $status = 200;
+
+
+        return $this->returnJSON($resData, $status);
+
+    }
+
+
+    // Save Banks
+    public function saveBanks(Request $req){
+
+        $this->url = "https://api.flutterwave.com/v3/banks/NG";
+
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+        CURLOPT_URL => $this->url,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_ENCODING => "",
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 0,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => "GET",
+        CURLOPT_HTTPHEADER => array(
+            "Authorization: Bearer FLWSECK_TEST-SANDBOXDEMOKEY-X"
+        ),
+        ));
+
+        $response = curl_exec($curl);
+
+        curl_close($curl);
+
+        $resData = json_decode($response);
+
+
+        foreach($resData->data as $key => $value){
+
+            $this->insertBank($value->id, $value->code, $value->name);
+        }
+
+        $resData = ['data' => $resData->data,'message' => "saved!", 'status' => 200];
+        $status = 200;
+
+        return $this->returnJSON($resData, $status);
+
+    }
+
+    // Validate Account Number
+    public function validateAccountNumber(Request $req){
+
+        $this->url = "https://api.paystack.co/bank/resolve?account_number=".$req->account_number."&bank_code=".$req->bank_code;
+
+
+        $curl = curl_init();
+  
+        curl_setopt_array($curl, array(
+          CURLOPT_URL => $this->url,
+          CURLOPT_RETURNTRANSFER => true,
+          CURLOPT_ENCODING => "",
+          CURLOPT_MAXREDIRS => 10,
+          CURLOPT_TIMEOUT => 30,
+          CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+          CURLOPT_CUSTOMREQUEST => "GET",
+          CURLOPT_HTTPHEADER => array(
+            "Authorization: Bearer sk_test_0530c6a0c35ebd6f6e5150c13c3f9ff7e28e1c77",
+            "Cache-Control: no-cache",
+          ),
+        ));
+        
+        $response = curl_exec($curl);
+        $err = curl_error($curl);
+        
+        curl_close($curl);
+        
+        if ($err) {
+
+          $resData = ['data' => [], 'message' => "cURL Error #:" . $err, 'status' => 201];
+          $status = 201;
+
+
+        } else {
+            $resData = ['data' => json_decode($response), 'status' => 200];
+            $status = 200;
+        }
+
+        return $this->returnJSON($resData, $status);
+
+
+    }
+
+
+    public function insertBank($id, $code, $name){
+        // Get if exist
+        Banks::updateOrInsert(['bankid' => $id], ['bankid' => $id, 'code' => $code, 'name' => $name]);
+
+        
+    }
+
 
 
 

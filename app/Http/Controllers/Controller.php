@@ -19,6 +19,8 @@ class Controller extends BaseController
     public $message;
     public $to = "app@cliqmore.com";
     public $file = "";
+    public $url;
+    public $curldata;
 
     // Response
     public function returnJSON($data, $status){

@@ -417,4 +417,100 @@ class SuperAdminController extends Controller
         return $this->returnJSON($resData, $status);
     }
 
+
+    // Create a transfer recipient
+
+    public function transferRecipient(Request $req){
+
+        $this->url = "https://api.paystack.co/transferrecipient";
+
+        $this->curldata = array(
+            'type' => "nuban",
+            'name' => $req->name,
+            'account_number' => $req->account_number,
+            'bank_code' => $req->bank_code,
+            'currency' => "NGN"
+        );
+
+
+        $fields_string = http_build_query($this->curldata);
+        //open connection
+        $ch = curl_init();
+        
+        //set the url, number of POST vars, POST data
+        curl_setopt($ch,CURLOPT_URL, $this->url);
+        curl_setopt($ch,CURLOPT_POST, true);
+        curl_setopt($ch,CURLOPT_POSTFIELDS, $fields_string);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+          "Authorization: Bearer sk_test_0530c6a0c35ebd6f6e5150c13c3f9ff7e28e1c77",
+          "Cache-Control: no-cache",
+        ));
+        
+        //So that curl_exec returns the contents of the cURL; rather than echoing it
+        curl_setopt($ch,CURLOPT_RETURNTRANSFER, true); 
+        
+        //execute post
+        $result = curl_exec($ch);
+
+        $response = json_decode($result);
+
+        $resData = ['data' => $response->data, 'status' => 200];
+        $status = 200;
+
+        return $this->returnJSON($resData, $status);
+
+
+    }
+
+    // Transfer the Money
+    public function transferMoney(Request $req){
+
+        /*
+
+        Retrying a transfer
+
+        If there is an error with the transfer request, kindly retry the transaction with the same reference in order to avoid double crediting. If a new reference is used, the transfer would be treated as a new request.
+
+        */ 
+
+        $this->url = "https://api.paystack.co/transfer";
+
+        $this->curldata = array(
+            'source' => "receivable",
+            'amount' => $req->amount,
+            'recipient' => $req->recipient_code,
+            'reason' => $req->reason
+        );
+
+
+
+        $fields_string = http_build_query($this->curldata);
+        //open connection
+        $ch = curl_init();
+        
+        //set the url, number of POST vars, POST data
+        curl_setopt($ch,CURLOPT_URL, $this->url);
+        curl_setopt($ch,CURLOPT_POST, true);
+        curl_setopt($ch,CURLOPT_POSTFIELDS, $fields_string);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+          "Authorization: Bearer sk_test_0530c6a0c35ebd6f6e5150c13c3f9ff7e28e1c77",
+          "Cache-Control: no-cache",
+        ));
+        
+        //So that curl_exec returns the contents of the cURL; rather than echoing it
+        curl_setopt($ch,CURLOPT_RETURNTRANSFER, true); 
+        
+        //execute post
+        $result = curl_exec($ch);
+        
+        $response = json_decode($result);
+
+
+        $resData = ['data' => $response, 'status' => 200];
+        $status = 200;
+
+        return $this->returnJSON($resData, $status);
+
+    }
+
 }
