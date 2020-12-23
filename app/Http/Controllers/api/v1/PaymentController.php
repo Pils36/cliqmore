@@ -4,6 +4,7 @@ namespace App\Http\Controllers\api\v1;
 
 
 use App\User as User;
+use App\Merchant as Merchant;
 use App\Orders as Orders;
 use App\AddressBook as AddressBook;
 use App\Cart as Cart;
@@ -12,6 +13,7 @@ use App\Products as Products;
 use App\ProductSale as ProductSale;
 use App\Payment as Payment;
 use App\Banks as Banks;
+use App\Notification as Notification;
 
 use App\Http\Controllers\Controller;
 
@@ -50,6 +52,7 @@ class PaymentController extends Controller
 
         $paymentDetails = Paystack::getPaymentData();
 
+
         // dd($paymentDetails['data']['metadata']['custom_fields'][0]['return_url']);
 
         // failed_url
@@ -72,6 +75,7 @@ class PaymentController extends Controller
     
                     
                         $merchant = Products::where('id', $value->product_id)->get();
+
     
                         // Get Address
                         $address = AddressBook::where('id', $paymentDetails['data']['metadata']['custom_fields'][0]['address'])->get();
@@ -92,7 +96,7 @@ class PaymentController extends Controller
     
                         $this->ordersMade($value->user_id, $value->product_id, 'card payment', $amount, 'open', $merchant[0]->merchant_id, $value->quantity, $myaddress);
 
-                        $this->notifyMerchant($value->product_id, $merchant[0]->merchant_id, $amount);
+                        $this->notifyMerchant($value->product_id, $merchant[0]->merchant_id, $amount, $user[0]->firstname, $user[0]->lastname, $merchant[0]->name, $user[0]->email);
 
                         $this->updateCartinfo($value->user_id, $value->product_id);
 
@@ -168,11 +172,40 @@ class PaymentController extends Controller
     }
 
 
-    public function notifyMerchant($product_id, $merchant_id, $amount){
+    public function notifyMerchant($product_id, $merchant_id, $amount, $firstname, $lastname, $productname, $email){
         // Insert to Notification Table
+        Notification::insert(['merchant_id' => $merchant_id, 'activity' => $productname.' order made by '.$firstname.' '.$lastname, 'purchase' => $amount]);
 
-        // Send merchant mail for new purchase and to confirm order
-        
+        // get Merchant
+
+        $merch = Merchant::where('id', $merchant_id)->get();
+
+        if(count($merch) > 0){ 
+
+            $userMech = User::where('user_id', $merch[0]->merchant_id)->get();
+
+            // Send merchant mail for new purchase and to confirm order
+
+            $this->to = $userMech[0]->email;
+            $this->subject = "New product ordered from Cliqmore";
+            $this->message = "<p>Hello ".$userMech[0]->firstname.",</p><br><p>You have a product order on cliqmore. </p><br> <p> Product Name: <b>".$productName."</b></p> <p> Customer: <b>".$firstname." ".$lastname."</b></p> <p> Purchase Amount: <b>".$amount."</b></p> <p> Date and Time: <b>".date('d/m/Y h:i a')."</b></p> <br> <p>Kindly acknowledge order purchase.</p> <p>Thank you</p>";
+
+            $this->sendMail($this->to, $this->subject);
+
+        }
+        else{
+
+            // Send to Cliqmore
+
+            $this->to = "info@cliqmore.com";
+            $this->subject = "New product ordered from Cliqmore";
+            $this->message = "<p>Hello ".$userMech[0]->firstname.",</p><br><p>Theres a new product purchase on cliqmore and can not be identified to a merchant. </p><br> <p> Product Name: <b>".$productName."</b></p> <p> Customer: <b>".$firstname." ".$lastname."</b></p> <p> Customer Email: <b>".$email."</b></p> <p> Amount Paid: <b>".$amount."</b></p> <p> Date and Time: <b>".date('d/m/Y h:i a')."</b></p> <br> <p>Kindly contact them on what to do</p>. <p>Thank you</p>";
+
+            $this->sendMail($this->to, $this->subject);
+
+        }
+
+
     }
 
 

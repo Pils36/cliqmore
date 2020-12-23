@@ -20,6 +20,7 @@ use App\Checkout as Checkout;
 use App\ProductSale as ProductSale;
 use App\Payment as Payment;
 use App\SuperAdmin as SuperAdmin;
+use App\DeliveryFee as DeliveryFee;
 
 class SuperAdminController extends Controller
 {
@@ -389,6 +390,74 @@ class SuperAdminController extends Controller
     public function deleteCategory(Request $req, ProductCategory $category, $id){
 
         $checkexist = $category->where('id', $id)->delete();
+
+        $resData = ['message' => "Success", 'status' => 200];
+        $status = 200;
+
+        return $this->returnJSON($resData, $status);
+
+    }
+
+    // GEt Delivery Fee
+
+    public function getDeliveryfee(Request $req, DeliveryFee $delivery){
+
+       $resp = $delivery->orderBy('location', 'DESC')->get();
+
+       if(count($resp) > 0){
+        $resData = ['data' => $resp, 'message' => "Success", 'status' => 200];
+        $status = 200;
+       }
+       else{
+        $resData = ['message' => "No record", 'status' => 201];
+        $status = 201;
+       }
+
+        return $this->returnJSON($resData, $status);
+
+    }
+
+    // Create Delivery Fee
+    public function createDeliveryfee(Request $req, DeliveryFee $delivery){
+
+        $delivery->updateOrInsert(['location' => $req->location], ['location' => $req->location, 'fee' => $req->fee]);
+
+        $resData = ['message' => "Success", 'status' => 200];
+        $status = 200;
+
+        return $this->returnJSON($resData, $status);
+
+    }
+
+    public function editDeliveryfee(Request $req, DeliveryFee $delivery, $id){
+
+        // Check if delivery Exist
+        $checkexist = $delivery->where('id', $id)->get();
+
+        if(count($checkexist) > 0){
+            // Update delivery
+            $delivery->where('id', $id)->update(['location' =>  $req->location, 'fee' => $req->fee]);
+
+            $resData = ['message' => "Success", 'status' => 200];
+            $status = 200;
+
+        }
+        else{
+            //    Category not found
+
+            $resData = ['message' => "No record", 'status' => 201];
+            $status = 201;
+        }
+
+        return $this->returnJSON($resData, $status);
+
+    }
+
+
+    // Delete Category
+    public function deleteDeliveryfee(Request $req, DeliveryFee $delivery, $id){
+
+        $delete = $delivery->where('id', $id)->delete();
 
         $resData = ['message' => "Success", 'status' => 200];
         $status = 200;

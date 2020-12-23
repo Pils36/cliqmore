@@ -359,5 +359,25 @@ class MerchantController extends Controller
         return $this->returnJSON($resData, $status);
     }
 
+
+    // Get Notifications
+    public function notification($id){
+        $notification = DB::table('notification')
+                ->where('merchant_id', $id)
+                ->orderBy('created_at', 'DESC')->get();
+
+        if(count($notification) > 0){
+            $resData = ['data' => $notification, 'message' => "success", 'status' => 200];
+            $status = 200;
+        }
+        else{
+
+            $resData = ['message' => "No new notification", 'status' => 201];
+            $status = 201;
+        }
+
+        return $this->returnJSON($resData, $status);
+    }
+
 }
 

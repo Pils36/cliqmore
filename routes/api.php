@@ -175,7 +175,19 @@ Route::group(['prefix' => '/'], function(){
 	// CALLBACK
 	Route::get('payment/callback', ['uses' => 'api\v1\PaymentController@handleGatewayCallback']);
 
+	// Get Notification
+	Route::get('notification/{id}', ['uses' => 'api\v1\MerchantController@notification']);
 
+
+	// Rating
+	Route::post('product/rating', ['uses' => 'api\v1\ProductController@rateProducts']);
+
+	// Create Delivery fee
+	
+	Route::get('delivery/get', ['uses' => 'api\v1\SuperAdminController@getDeliveryfee']);
+	Route::post('delivery/create', ['uses' => 'api\v1\SuperAdminController@createDeliveryfee']);
+	Route::post('delivery/edit/{id}', ['uses' => 'api\v1\SuperAdminController@editDeliveryfee']);
+	Route::post('delivery/delete/{id}', ['uses' => 'api\v1\SuperAdminController@deleteDeliveryfee']);
 
 	// Bank Transactions and Money Transfers
 

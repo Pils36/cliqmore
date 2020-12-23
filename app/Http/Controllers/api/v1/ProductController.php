@@ -9,6 +9,7 @@ use App\Products as Products;
 use App\Merchant as Merchant;
 use App\ProductSpecification as ProductSpecification;
 use App\ProductCategory as ProductCategory;
+use App\RateProduct as RateProduct;
 
 
 use App\Http\Controllers\Controller;
@@ -586,6 +587,23 @@ class ProductController extends Controller
     }
 
 
+    // Rate Products
+
+    public function rateProducts(Request $req, RateProduct $rate){
+        // Insert Rating with product id
+        $ins = $rate->insert(['product_id' => $req->product_id, 'score' => $req->score]);
+
+        // Get Products and update
+        $productRate = RateProduct::where('product_id', $req->product_id)->avg('score');
+
+        // Update
+        Products::where('id', $req->product_id)->update(['rating' => $productRate]);
+
+        $resData = ['message' => "Success", 'status' => 200];
+        $status = 200;
+
+        return $this->returnJSON($resData, $status);
+    }
 
 }
 
