@@ -281,6 +281,7 @@ class UserController extends Controller
     }
 
 
+    
 
 
 
@@ -301,7 +302,7 @@ class UserController extends Controller
 
             $this->to = $req->email;
             $this->subject = "Password reset";
-            $this->message = "<p>Hi ".$getuser[0]->firstname.",</p><br><p>To set up a new password to your Cliqmore account, click 'Reset Your Password' below, or use this link: https://".$_SERVER['SERVER_NAME']."/api/passwordreset?token=".$token."</p> <br> <p>The link will expire in 24 hours. If nothing happens after clicking, copy, and paste the link in your browser.</p>";
+            $this->message = "<p>Hi ".$getuser[0]->firstname.",</p><br><p>To set up a new password to your Cliqmore account, click 'Reset Your Password' below, or use this link: ".$req->url."?token=".$token."</p> <br> <p>The link will expire in 24 hours. If nothing happens after clicking, copy and paste the link in your browser.</p>";
 
             $this->sendMail($this->to, $this->subject);
 

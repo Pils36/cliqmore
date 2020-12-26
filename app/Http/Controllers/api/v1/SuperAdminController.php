@@ -21,6 +21,7 @@ use App\ProductSale as ProductSale;
 use App\Payment as Payment;
 use App\SuperAdmin as SuperAdmin;
 use App\DeliveryFee as DeliveryFee;
+use App\PasswordReset as PasswordReset;
 
 class SuperAdminController extends Controller
 {
@@ -581,5 +582,86 @@ class SuperAdminController extends Controller
         return $this->returnJSON($resData, $status);
 
     }
+
+
+        // Password Reset Link
+        public function resetLink(Request $req, PasswordReset $reset){
+        
+            $getuser = SuperAdmin::where('email', $req->email)->get();
+    
+            if(count($getuser) > 0){
+    
+                $token = str_random(32);
+                // Generate token and insert to Password reset
+                $reset->email = $req->email;
+                $reset->token = $token;
+                $reset->updated_at = date('Y-m-d h:i:s');
+    
+                $reset->save();
+    
+                $this->to = $req->email;
+                $this->subject = "Password reset";
+                $this->message = "<p>Hi ".$getuser[0]->name.",</p><br><p>To set up a new password to your Cliqmore account, click 'Reset Your Password' below, or use this link: ".$req->url."?token=".$token."</p> <br> <p>The link will expire in 24 hours. If nothing happens after clicking, copy and paste the link in your browser.</p>";
+    
+                $this->sendMail($this->to, $this->subject);
+    
+                $resData = ['message' => "Reset link generated ", 'status' => 200];
+                $status = 200;
+            }
+            else{
+                $resData = ['message' => "Record not found", 'status' => 201];
+                $status = 201;
+            }
+    
+            return $this->returnJSON($resData, $status);
+    
+        }
+    
+        // Change Reset Password
+        public function changeresetPassword(Request $req, $token){
+            
+            $getuser = PasswordReset::where('token', $token)->get();
+    
+            if(count($getuser) > 0){
+                // Change Password / update Password
+                SuperAdmin::where('email', $getuser[0]->email)->update(['password' => Hash::make($req->password)]);
+                // Remove Reset Link
+                PasswordReset::where('token', $token)->delete();
+    
+                $resData = ['message' => "Password reset", 'status' => 200];
+                $status = 200;
+            }
+            else{
+                $resData = ['message' => "Token expired", 'status' => 201];
+                $status = 201;
+            }
+    
+            return $this->returnJSON($resData, $status);
+    
+        }
+    
+    
+        // Change Password
+        public function changePassword(Request $req){
+            $getuser = SuperAdmin::where('email', $req->email)->get();
+    
+            if(count($getuser) > 0){
+                // Change Password / update Password
+                User::where('email', $getuser[0]->email)->update(['password' => Hash::make($req->password)]);
+    
+                $resData = ['message' => "Password updated", 'status' => 200];
+                $status = 200;
+            }
+            else{
+                $resData = ['message' => "Record not found", 'status' => 201];
+                $status = 201;
+            }
+    
+            return $this->returnJSON($resData, $status);
+    
+        }
+
+
+
 
 }

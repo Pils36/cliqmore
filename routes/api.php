@@ -26,10 +26,21 @@ Route::group(['prefix' => '/'], function(){
 
 
 	Route::post('resetlink',  ['uses' => 'api\v1\UserController@resetLink']);
+	
 
 	Route::post('passwordreset/{token}',  ['uses' => 'api\v1\UserController@changeresetPassword']);
 
 	Route::post('changepassword',  ['uses' => 'api\v1\UserController@changePassword']);
+
+
+
+	Route::post('admin/resetlink',  ['uses' => 'api\v1\SuperAdminController@resetLink']);
+
+	Route::post('admin/passwordreset/{token}',  ['uses' => 'api\v1\SuperAdminController@changeresetPassword']);
+
+	Route::post('admin/changepassword',  ['uses' => 'api\v1\SuperAdminController@changePassword']);
+
+
 
 	Route::post('updateprofile',  ['uses' => 'api\v1\UserController@updateUserinfo']);
 
