@@ -52,6 +52,7 @@ class PaymentController extends Controller
 
         $paymentDetails = Paystack::getPaymentData();
 
+        // dd($paymentDetails);
 
         // dd($paymentDetails['data']['metadata']['custom_fields'][0]['return_url']);
 
@@ -174,13 +175,19 @@ class PaymentController extends Controller
 
     public function notifyMerchant($product_id, $merchant_id, $amount, $firstname, $lastname, $productname, $email){
         // Insert to Notification Table
-        Notification::insert(['merchant_id' => $merchant_id, 'activity' => $productname.' order made by '.$firstname.' '.$lastname, 'purchase' => $amount]);
+        Notification::insert(['merchant_id' => $merchant_id, 'activity' => $productname.' order made by '.$firstname.' '.$lastname, 'purchase' => $amount, 'status' => 'checkout']);
+
+        Notification::insert(['merchant_id' => $merchant_id, 'activity' => 'Received NGN '.$amount, 'status' => 'credit']);
 
         // get Merchant
 
         $merch = Merchant::where('id', $merchant_id)->get();
 
-        if(count($merch) > 0){ 
+        if(count($merch) > 0){
+            
+            $walletbalance = $merch[0]->wallet_amount + $amount;
+
+            Merchant::where('id', $merchant_id)->update(['wallet_amount' => $walletbalance]);
 
             $userMech = User::where('user_id', $merch[0]->merchant_id)->get();
 
@@ -188,7 +195,7 @@ class PaymentController extends Controller
 
             $this->to = $userMech[0]->email;
             $this->subject = "New product ordered from Cliqmore";
-            $this->message = "<p>Hello ".$userMech[0]->firstname.",</p><br><p>You have a product order on cliqmore. </p><br> <p> Product Name: <b>".$productName."</b></p> <p> Customer: <b>".$firstname." ".$lastname."</b></p> <p> Purchase Amount: <b>".$amount."</b></p> <p> Date and Time: <b>".date('d/m/Y h:i a')."</b></p> <br> <p>Kindly acknowledge order purchase.</p> <p>Thank you</p>";
+            $this->message = "<p>Hello ".$userMech[0]->firstname.",</p><br><p>You have a product order on cliqmore. </p><br> <p> Product Name: <b>".$productname."</b></p> <p> Customer: <b>".$firstname." ".$lastname."</b></p> <p> Purchase Amount: <b>".$amount."</b></p> <p> Date and Time: <b>".date('d/m/Y h:i a')."</b></p> <br> <p>Kindly acknowledge order purchase.</p> <p>Thank you</p>";
 
             $this->sendMail($this->to, $this->subject);
 
@@ -199,7 +206,7 @@ class PaymentController extends Controller
 
             $this->to = "info@cliqmore.com";
             $this->subject = "New product ordered from Cliqmore";
-            $this->message = "<p>Hello ".$userMech[0]->firstname.",</p><br><p>Theres a new product purchase on cliqmore and can not be identified to a merchant. </p><br> <p> Product Name: <b>".$productName."</b></p> <p> Customer: <b>".$firstname." ".$lastname."</b></p> <p> Customer Email: <b>".$email."</b></p> <p> Amount Paid: <b>".$amount."</b></p> <p> Date and Time: <b>".date('d/m/Y h:i a')."</b></p> <br> <p>Kindly contact them on what to do</p>. <p>Thank you</p>";
+            $this->message = "<p>Hello ".$userMech[0]->firstname.",</p><br><p>Theres a new product purchase on cliqmore and can not be identified to a merchant. </p><br> <p> Product Name: <b>".$productname."</b></p> <p> Customer: <b>".$firstname." ".$lastname."</b></p> <p> Customer Email: <b>".$email."</b></p> <p> Amount Paid: <b>".$amount."</b></p> <p> Date and Time: <b>".date('d/m/Y h:i a')."</b></p> <br> <p>Kindly contact them on what to do</p>. <p>Thank you</p>";
 
             $this->sendMail($this->to, $this->subject);
 

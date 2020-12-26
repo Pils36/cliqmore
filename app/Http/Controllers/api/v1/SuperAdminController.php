@@ -22,6 +22,7 @@ use App\Payment as Payment;
 use App\SuperAdmin as SuperAdmin;
 use App\DeliveryFee as DeliveryFee;
 use App\PasswordReset as PasswordReset;
+use App\Notification as Notification;
 
 class SuperAdminController extends Controller
 {
@@ -91,7 +92,7 @@ class SuperAdminController extends Controller
     public function getallmerchantProducts(Request $req){
 
         $allmerchantproducts = DB::table('products')
-                    ->select(DB::raw('merchants.id as merchantId, merchants.merchant_id as merchantuserId, merchants.firstname, merchants.lastname, users.user_id, users.email, users.phone_number, merchants.location as address, merchants.company, merchants.description, merchants.avatar as merchantLogo, merchants.bankname, merchants.accountnumber, products.id as productId, products.name as productName, products.avatar as image, products.description as description, products.specification, products.about, products.features, products.category, products.quantity, products.availablequantity, users.status as accountStatus'))
+                    ->select(DB::raw('merchants.id as merchantId, merchants.merchant_id as merchantuserId, merchants.firstname, merchants.lastname, users.user_id, users.email, users.phone_number, merchants.location as address, merchants.company, merchants.description, merchants.avatar as merchantLogo, merchants.bankname, merchants.accountnumber, merchants.wallet_amount, products.id as productId, products.name as productName, products.avatar as image, products.description as description, products.specification, products.about, products.features, products.category, products.quantity, products.availablequantity, users.status as accountStatus'))
                     ->join('merchants', 'merchants.id', '=', 'products.merchant_id')
                     ->join('users', 'users.user_id', '=', 'merchants.merchant_id')
                     ->orderBy('merchants.created_at', 'DESC')->get();
@@ -196,7 +197,7 @@ class SuperAdminController extends Controller
     public function getallMerchants(Request $req){
 
         $getUser = DB::table('merchants')
-                ->select(DB::raw('merchants.id, merchants.merchant_id as merchantuserId, merchants.firstname, merchants.lastname, users.user_id, users.email, users.phone_number, merchants.location as address, merchants.company, merchants.description, merchants.avatar as merchantAvatar, merchants.logo as merchantLogo, users.status as accountStatus, merchants.bankname, merchants.accountnumber'))
+                ->select(DB::raw('merchants.id, merchants.merchant_id as merchantuserId, merchants.firstname, merchants.lastname, users.user_id, users.email, users.phone_number, merchants.location as address, merchants.company, merchants.description, merchants.avatar as merchantAvatar, merchants.logo as merchantLogo, users.status as accountStatus, merchants.bankname, merchants.accountnumber, merchants.wallet_amount'))
                 ->join('users', 'users.user_id', '=', 'merchants.merchant_id')
                 ->orderBy('merchants.created_at', 'DESC')->get();
 
@@ -276,7 +277,7 @@ class SuperAdminController extends Controller
     public function getallSoldproducts(Request $req){
 
         $getSold = DB::table('merchants')
-                ->select(DB::raw('merchants.id, merchants.merchant_id as merchantuserId, merchants.firstname, merchants.lastname, users.user_id, users.email, users.phone_number, merchants.location as address, merchants.company, merchants.description, merchants.avatar as merchantAvatar, merchants.logo as merchantLogo, merchants.bankname, merchants.accountnumber, products.quantity as quantityUploaded, products.availablequantity as quantityAvailable, users.status as accountStatus, product_sale.product_id as soldproductId, product_sale.quantity as soldQuantity, products.avatar as productImage, products.name as productName, products.rating, products.price as productPrice, products.description, products.specification, products.about, products.features, products.category'))
+                ->select(DB::raw('merchants.id, merchants.merchant_id as merchantuserId, merchants.firstname, merchants.lastname, users.user_id, users.email, users.phone_number, merchants.location as address, merchants.company, merchants.description, merchants.avatar as merchantAvatar, merchants.logo as merchantLogo, merchants.bankname, merchants.accountnumber, merchants.wallet_amount, products.quantity as quantityUploaded, products.availablequantity as quantityAvailable, users.status as accountStatus, product_sale.product_id as soldproductId, product_sale.quantity as soldQuantity, products.avatar as productImage, products.name as productName, products.rating, products.price as productPrice, products.description, products.specification, products.about, products.features, products.category'))
                 ->join('users', 'users.user_id', '=', 'merchants.merchant_id')
                 ->join('products', 'products.merchant_id', '=', 'merchants.id')
                 ->join('product_sale', 'product_sale.product_id', '=', 'products.id')
@@ -533,7 +534,7 @@ class SuperAdminController extends Controller
     }
 
     // Transfer the Money
-    public function transferMoney(Request $req){
+    public function transferMoney(Request $req, $id){
 
         /*
 
@@ -543,44 +544,80 @@ class SuperAdminController extends Controller
 
         */ 
 
-        $this->url = "https://api.paystack.co/transfer";
 
-        $this->curldata = array(
-            'source' => "receivable",
-            'amount' => $req->amount,
-            'recipient' => $req->recipient_code,
-            'reason' => $req->reason
-        );
+        $getMerchant = Merchant::where('id', $id)->get();
 
+        if(count($getMerchant) > 0){
 
+            if($getMerchant[0]->wallet_amount >= $req->amount){
 
-        $fields_string = http_build_query($this->curldata);
-        //open connection
-        $ch = curl_init();
+                $this->url = "https://api.paystack.co/transfer";
+
+                $this->curldata = array(
+                    'source' => "receivable",
+                    'amount' => $req->amount,
+                    'recipient' => $req->recipient_code,
+                    'reason' => $req->reason
+                );
         
-        //set the url, number of POST vars, POST data
-        curl_setopt($ch,CURLOPT_URL, $this->url);
-        curl_setopt($ch,CURLOPT_POST, true);
-        curl_setopt($ch,CURLOPT_POSTFIELDS, $fields_string);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-          "Authorization: Bearer sk_test_0530c6a0c35ebd6f6e5150c13c3f9ff7e28e1c77",
-          "Cache-Control: no-cache",
-        ));
         
-        //So that curl_exec returns the contents of the cURL; rather than echoing it
-        curl_setopt($ch,CURLOPT_RETURNTRANSFER, true); 
         
-        //execute post
-        $result = curl_exec($ch);
+                $fields_string = http_build_query($this->curldata);
+                //open connection
+                $ch = curl_init();
+                
+                //set the url, number of POST vars, POST data
+                curl_setopt($ch,CURLOPT_URL, $this->url);
+                curl_setopt($ch,CURLOPT_POST, true);
+                curl_setopt($ch,CURLOPT_POSTFIELDS, $fields_string);
+                curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+                  "Authorization: Bearer sk_test_0530c6a0c35ebd6f6e5150c13c3f9ff7e28e1c77",
+                  "Cache-Control: no-cache",
+                ));
+                
+                //So that curl_exec returns the contents of the cURL; rather than echoing it
+                curl_setopt($ch,CURLOPT_RETURNTRANSFER, true); 
+                
+                //execute post
+                $result = curl_exec($ch);
+                
+                $response = json_decode($result);
         
-        $response = json_decode($result);
+        
+                    $wallet = $getMerchant[0]->wallet_amount - $req->amount;
+        
+                    Merchant::where('id', $id)->update(['wallet_amount' => $wallet]);
+        
+                    $activity = "Withdraw NGN ".$req->amount;
+        
+                    // Update Account Statement
+                    $this->notifyMerchant($id, $activity, $req->amount);
+                    
+                    $resData = ['data' => $response, 'status' => 200];
+                    $status = 200;
+            }
+            else{
+                $resData = ['message' => 'Insufficient fund', 'status' => 201];
+                $status = 201;
+            }
 
+        }
+        else{
 
-        $resData = ['data' => $response, 'status' => 200];
-        $status = 200;
+            $resData = ['message' => 'Cannot identify recipient', 'status' => 201];
+            $status = 201;
+
+        }
 
         return $this->returnJSON($resData, $status);
 
+    }
+
+
+    public function notifyMerchant($merchant_id, $activity, $amount){
+
+        // Insert to Notification Table
+        Notification::insert(['merchant_id' => $merchant_id, 'activity' => $activity, 'purchase' => $amount, 'status' => 'debit']);
     }
 
 

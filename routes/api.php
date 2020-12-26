@@ -190,6 +190,9 @@ Route::group(['prefix' => '/'], function(){
 	Route::get('notification/{id}', ['uses' => 'api\v1\MerchantController@notification']);
 
 
+	Route::get('accountstatement/{id}', ['uses' => 'api\v1\MerchantController@accountStatement']);
+
+
 	// Rating
 	Route::post('product/rating', ['uses' => 'api\v1\ProductController@rateProducts']);
 
@@ -211,7 +214,7 @@ Route::group(['prefix' => '/'], function(){
 	// Transfer Money
 	Route::post('createrecipient', ['uses' => 'api\v1\SuperAdminController@transferRecipient']);
 
-	Route::post('transfermoney', ['uses' => 'api\v1\SuperAdminController@transferMoney']);
+	Route::post('transfermoney/{id}', ['uses' => 'api\v1\SuperAdminController@transferMoney']);
 });
 
 

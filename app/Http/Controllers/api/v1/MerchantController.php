@@ -379,5 +379,42 @@ class MerchantController extends Controller
         return $this->returnJSON($resData, $status);
     }
 
+
+    public function accountStatement(Request $req, $id){
+
+        switch ($req->status) {
+            case 'credit':
+                $notification = DB::table('notification')
+                ->where('merchant_id', $id)->where('status', 'credit')
+                ->orderBy('created_at', 'DESC')->get();
+                break;
+
+            case 'debit':
+                $notification = DB::table('notification')
+                ->where('merchant_id', $id)->where('status', 'debit')
+                ->orderBy('created_at', 'DESC')->get();
+                break;
+            
+            default:
+                $notification = DB::table('notification')
+                ->where('merchant_id', $id)->where('status', 'credit')->orWhere('status', 'debit')
+                ->orderBy('created_at', 'DESC')->get();
+                break;
+        }
+
+
+        if(count($notification) > 0){
+            $resData = ['data' => $notification, 'message' => "success", 'status' => 200];
+            $status = 200;
+        }
+        else{
+
+            $resData = ['message' => "No record", 'status' => 201];
+            $status = 201;
+        }
+
+        return $this->returnJSON($resData, $status);
+    }
+
 }
 
