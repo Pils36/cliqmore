@@ -261,7 +261,7 @@ class ProductController extends Controller
                   $merchant->quantity = $req->quantity;
                   $merchant->availablequantity = $req->quantity;
                   $merchant->avatar = $fileToStore;
-              $execute = $merchant->save();
+                  $execute = $merchant->save();
 
               $resData = ['data' => $execute, 'message' => "Successfull", 'status' => 200];
               $status = 200;
@@ -460,8 +460,12 @@ class ProductController extends Controller
         }
 
 
+
         else{
-          $resData = ['message' => $validator->errors(), 'status' => 201];
+
+          $error = implode(",",$validator->messages()->all());
+
+          $resData = ['message' => $error, 'status' => 201];
           $status = 201;
         }
 
