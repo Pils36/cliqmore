@@ -95,34 +95,6 @@ class ProductController extends Controller
 
         if($validator->passes()){
 
-          // $avatar = null;
-          // $avatar2 = null;
-          // $avatar3 = null;
-          // $avatar4 = null;
-          // $avatar5 = null;
-
-
-
-            // if($req->hasFile('avatar')){
-
-            //  $validator = Validator::make($req->all(), [
-            //       'avatar'=>'mimes:jpeg,bmp,jpg,png|between:1, 6000',
-            //   ]);
-
-            //  if($validator->passes()){
-            //     $image = $req->file('avatar');
-            //     $name = $req->name.".".$image->getClientOriginalExtension();
-            //     $fileNameToStore = rand().'_'.time();
-            //     $image->move(app()->basePath('../../product/avatar/'.$fileNameToStore), $name);
-            //     $avatar = $_SERVER['HTTP_HOST']."/product/avatar/".$fileNameToStore."/".$name;
-            //  }
-            //  else{
-            //     $resData = ['message' => $validator->errors(), 'status' => 201];
-            //     $status = 201;
-            //  }
-              
-                
-            // }
 
 
             $fileToStore = "";
@@ -155,92 +127,6 @@ class ProductController extends Controller
             }
 
 
-            
-
-
-            // if($req->hasFile('avatar2')){
-
-            //   $validator = Validator::make($req->all(), [
-            //       'avatar2'=>'mimes:jpeg,bmp,jpg,png|between:1, 6000',
-            //   ]);
-
-            //  if($validator->passes()){
-            //     $image = $req->file('avatar2');
-            //     $name = $req->name.".".$image->getClientOriginalExtension();
-            //     $fileNameToStore = rand().'_'.time();
-            //     $image->move(app()->basePath('../../product/avatar/'.$fileNameToStore), $name);
-            //     $avatar2 = $_SERVER['HTTP_HOST']."/product/avatar/".$fileNameToStore."/".$name;
-            //  }
-            //  else{
-            //     $resData = ['message' => $validator->errors(), 'status' => 201];
-            //     $status = 201;
-            //  }
-
-                
-            // }       
-
-            // if($req->hasFile('avatar3')){
-
-            //   $validator = Validator::make($req->all(), [
-            //       'avatar3'=>'mimes:jpeg,bmp,jpg,png|between:1, 6000',
-            //   ]);
-
-            //  if($validator->passes()){
-            //     $image = $req->file('avatar3');
-            //     $name = $req->name.".".$image->getClientOriginalExtension();
-            //     $fileNameToStore = rand().'_'.time();
-            //     $image->move(app()->basePath('../../product/avatar/'.$fileNameToStore), $name);
-            //     $avatar3 = $_SERVER['HTTP_HOST']."/product/avatar/".$fileNameToStore."/".$name;
-            //  }
-            //  else{
-            //     $resData = ['message' => $validator->errors(), 'status' => 201];
-            //     $status = 201;
-            //  }
-
-
-            // } 
-
-            // if($req->hasFile('avatar4')){
-
-            //   $validator = Validator::make($req->all(), [
-            //       'avatar4'=>'mimes:jpeg,bmp,jpg,png|between:1, 6000',
-            //   ]);
-
-            //  if($validator->passes()){
-            //     $image = $req->file('avatar4');
-            //     $name = $req->name.".".$image->getClientOriginalExtension();
-            //     $fileNameToStore = rand().'_'.time();
-            //     $image->move(app()->basePath('../../product/avatar/'.$fileNameToStore), $name);
-            //     $avatar4 = $_SERVER['HTTP_HOST']."/product/avatar/".$fileNameToStore."/".$name;
-            //  }
-            //  else{
-            //     $resData = ['message' => $validator->errors(), 'status' => 201];
-            //     $status = 201;
-            //  }
-
-            // } 
-
-            // if($req->hasFile('avatar5')){
-
-            //   $validator = Validator::make($req->all(), [
-            //       'avatar5'=>'mimes:jpeg,bmp,jpg,png|between:1, 6000',
-            //   ]);
-
-            //  if($validator->passes()){
-            //     $image = $req->file('avatar5');
-            //     $name = $req->name.".".$image->getClientOriginalExtension();
-            //     $fileNameToStore = rand().'_'.time();
-            //     $image->move(app()->basePath('../../product/avatar/'.$fileNameToStore), $name);
-            //     $avatar5 = $_SERVER['HTTP_HOST']."/product/avatar/".$fileNameToStore."/".$name;
-            //  }
-            //  else{
-            //     $resData = ['message' => $validator->errors(), 'status' => 201];
-            //     $status = 201;
-            //  }
-
-                
-            // } 
-
 
               $merchant = new Products();
               // return $merchant;
@@ -268,7 +154,10 @@ class ProductController extends Controller
 
         }
         else{
-          $resData = ['message' => $validator->errors(), 'status' => 201];
+
+          $error = implode(",",$validator->messages()->all());
+
+          $resData = ['message' => $error, 'status' => 201];
           $status = 201;
         }
 
@@ -308,7 +197,6 @@ class ProductController extends Controller
             if(count($req->file('avatar')) > 0)
             {
 
-
                 foreach($req->file('avatar') as $key => $value){
 
                     $name = md5($req->name).".".$value->getClientOriginalExtension();
@@ -319,124 +207,17 @@ class ProductController extends Controller
                     $fileToStore .=  $avatar.",";
 
                 }
-                
-                Products::where('id', $id)->where('merchant_id', $merchant_id[0]->id)->update(['avatar' => $fileToStore]);
     
             }
           }
-
-
-            //     if($req->hasFile('avatar')){
-
-            //       $validator = Validator::make($req->all(), [
-            //           'avatar'=>'mimes:jpeg,bmp,jpg,png|between:1, 6000',
-            //       ]);
-
-            //       if($validator->passes()){
-            //         $image = $req->file('avatar');
-            //         $name = $req->name.".".$image->getClientOriginalExtension();
-            //         $fileNameToStore = rand().'_'.time();
-            //         $image->move(app()->basePath('../../product/avatar/'.$fileNameToStore), $name);
-            //         $avatar = $_SERVER['HTTP_HOST']."/product/avatar/".$fileNameToStore."/".$name;
-            //           Products::where('id', $id)->where('merchant_id', $merchant_id[0]->id)->update(['avatar' => $avatar]);
-            //      }
-            //      else{
-            //         $resData = ['message' => $validator->errors(), 'status' => 201];
-            //         $status = 201;
-            //      }
+          else{
+            $fileToStore = $product[0]->avatar;
+          }
+          
 
 
 
-                
-            // }
-            // if($req->hasFile('avatar2')){
-
-            //   $validator = Validator::make($req->all(), [
-            //           'avatar2'=>'mimes:jpeg,bmp,jpg,png|between:1, 6000',
-            //       ]);
-
-            //       if($validator->passes()){
-            //         $image = $req->file('avatar2');
-            //         $name = $req->name.".".$image->getClientOriginalExtension();
-            //         $fileNameToStore = rand().'_'.time();
-            //         $image->move(app()->basePath('../../product/avatar/'.$fileNameToStore), $name);
-            //         $avatar2 = $_SERVER['HTTP_HOST']."/product/avatar/".$fileNameToStore."/".$name;
-            //         Products::where('id', $id)->where('merchant_id', $merchant_id[0]->id)->update(['avatar2' => $avatar2]);
-            //      }
-            //      else{
-            //         $resData = ['message' => $validator->errors(), 'status' => 201];
-            //         $status = 201;
-            //      }
-
-                
-            // }
-
-
-            // if($req->hasFile('avatar3')){
-
-            //   $validator = Validator::make($req->all(), [
-            //           'avatar3'=>'mimes:jpeg,bmp,jpg,png|between:1, 6000',
-            //       ]);
-
-            //       if($validator->passes()){
-            //         $image = $req->file('avatar3');
-            //         $name = $req->name.".".$image->getClientOriginalExtension();
-            //         $fileNameToStore = rand().'_'.time();
-            //         $image->move(app()->basePath('../../product/avatar/'.$fileNameToStore), $name);
-            //         $avatar3 = $_SERVER['HTTP_HOST']."/product/avatar/".$fileNameToStore."/".$name;
-            //         Products::where('id', $id)->where('merchant_id', $merchant_id[0]->id)->update(['avatar3' => $avatar3]);
-            //      }
-            //      else{
-            //         $resData = ['message' => $validator->errors(), 'status' => 201];
-            //         $status = 201;
-            //      }
-
-            // } 
-
-
-            // if($req->hasFile('avatar4')){
-
-            //   $validator = Validator::make($req->all(), [
-            //           'avatar4'=>'mimes:jpeg,bmp,jpg,png|between:1, 6000',
-            //       ]);
-
-            //       if($validator->passes()){
-            //         $image = $req->file('avatar4');
-            //         $name = $req->name.".".$image->getClientOriginalExtension();
-            //         $fileNameToStore = rand().'_'.time();
-            //         $image->move(app()->basePath('../../product/avatar/'.$fileNameToStore), $name);
-            //         $avatar4 = $_SERVER['HTTP_HOST']."/product/avatar/".$fileNameToStore."/".$name;
-            //         Products::where('id', $id)->where('merchant_id', $merchant_id[0]->id)->update(['avatar4' => $avatar4]);
-            //      }
-            //      else{
-            //         $resData = ['message' => $validator->errors(), 'status' => 201];
-            //         $status = 201;
-            //      }
-
-            // } 
-            // if($req->hasFile('avatar5')){
-
-            //   $validator = Validator::make($req->all(), [
-            //           'avatar5'=>'mimes:jpeg,bmp,jpg,png|between:1, 6000',
-            //       ]);
-
-            //       if($validator->passes()){
-            //         $image = $req->file('avatar5');
-            //         $name = $req->name.".".$image->getClientOriginalExtension();
-            //         $fileNameToStore = rand().'_'.time();
-            //         $image->move(app()->basePath('../../product/avatar/'.$fileNameToStore), $name);
-            //         $avatar5 = $_SERVER['HTTP_HOST']."/product/avatar/".$fileNameToStore."/".$name;
-            //         Products::where('id', $id)->where('merchant_id', $merchant_id[0]->id)->update(['avatar5' => $avatar5]);
-            //      }
-            //      else{
-            //         $resData = ['message' => $validator->errors(), 'status' => 201];
-            //         $status = 201;
-            //      }
-
-            // }
-
-
-              $execute = Products::where('id', $id)->where('merchant_id', $merchant_id[0]->id)->update(['name' => $req->name, 'rating' => $req->rating, 'price' => $req->price, 'description' => $req->description, 'specification' => $req->specification, 'about' => $req->about, 'features' => $req->features, 'whats_in_the_box' => $req->whats_in_the_box, 'display' => $req->display, 'operating_system' => $req->operating_system, 'warranty' => $req->warranty, 'sku' => $req->sku, 'category' => $req->category, 'quantity' => $req->quantity, 'availablequantity' => $req->quantity]);
+              $execute = Products::where('id', $id)->where('merchant_id', $merchant_id[0]->id)->update(['name' => $req->name, 'rating' => $req->rating, 'price' => $req->price, 'description' => $req->description, 'specification' => $req->specification, 'about' => $req->about, 'features' => $req->features, 'whats_in_the_box' => $req->whats_in_the_box, 'display' => $req->display, 'operating_system' => $req->operating_system, 'warranty' => $req->warranty, 'sku' => $req->sku, 'category' => $req->category, 'quantity' => $req->quantity, 'availablequantity' => $req->quantity, 'avatar' => $fileToStore]);
 
 
               if($execute == 1){
@@ -453,8 +234,13 @@ class ProductController extends Controller
 
               }
               else{
-                $resData = ['message' => "Product not found", 'status' => 201];
+                
+
+                $error = implode(",",$validator->messages()->all());
+
+                $resData = ['message' => $error, 'status' => 201];
                 $status = 201;
+
               }
 
         }
@@ -463,10 +249,9 @@ class ProductController extends Controller
 
         else{
 
-          $error = implode(",",$validator->messages()->all());
-
-          $resData = ['message' => $error, 'status' => 201];
+          $resData = ['message' => "Product not found", 'status' => 201];
           $status = 201;
+          
         }
 
         return $this->returnJSON($resData, $status);
@@ -562,7 +347,33 @@ class ProductController extends Controller
 
 
         if (count($allcategories)) {
-          $resData = ['data' => $allcategories, 'message' => "Success", 'status' => 200];
+
+          $data = [];
+          // Get products and category count
+          foreach($allcategories as $key => $value){
+              $getproducts = Products::where('category', $value->category)->get();
+
+              if(count($getproducts) > 0){
+                $result = array(
+                  'id' => $value->id,
+                  'category' => $value->category,
+                  'totalProduct' => count($getproducts)
+                );
+              }
+              else{
+                $result = array(
+                  'id' => $value->id,
+                  'category' => $value->category,
+                  'totalProduct' => 0
+                );
+              }
+
+              $data []= $result;
+
+          }
+
+
+          $resData = ['data' => $data, 'message' => "Success", 'status' => 200];
           $status = 200;
         } 
         else {
