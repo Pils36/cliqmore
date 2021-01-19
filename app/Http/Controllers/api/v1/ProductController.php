@@ -209,6 +209,9 @@ class ProductController extends Controller
                 }
     
             }
+            else{
+              $fileToStore = $product[0]->avatar;
+            }
           }
           else{
             $fileToStore = $product[0]->avatar;
