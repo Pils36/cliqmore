@@ -14,6 +14,7 @@
         "laravel/passport": "7.5.1",
         "laravel/tinker": "^1.0",
         "rap2hpoutre/laravel-log-viewer": "^1.7",
+        "spatie/laravel-cors": "^1.6",
         "unicodeveloper/laravel-paystack": "^1.0"
     },
     "require-dev": {
