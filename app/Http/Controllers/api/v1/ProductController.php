@@ -170,6 +170,7 @@ class ProductController extends Controller
     //Update product
     public function update(Request $req, $id){
 
+      dd($req->all());
 
       // Get Merchant
         $product = Products::where('id', $id)->get();
@@ -190,6 +191,9 @@ class ProductController extends Controller
 
 
           $fileToStore = "";
+          $addImage = "";
+
+          $data = [];
           
           if($req->hasFile('avatar')){
 
@@ -207,20 +211,43 @@ class ProductController extends Controller
                     $fileToStore .=  $avatar.",";
 
                 }
+
+
+                if(count($req->previousImage) > 1){
+
+                  foreach($req->previousImage as $key){
+                    $addImage .= $key.",";
+                  }
+      
+                }
+                else{
+                  $addImage .= $req->previousImage.",";
+                }
+      
+                $data []= $addImage.$fileToStore;
+
+
     
             }
             else{
               $fileToStore = $product[0]->avatar;
+
+              $data []= $fileToStore;
+
             }
           }
           else{
             $fileToStore = $product[0]->avatar;
+
+            $data []= $fileToStore;
           }
+
+          
           
 
 
 
-              $execute = Products::where('id', $id)->where('merchant_id', $merchant_id[0]->id)->update(['name' => $req->name, 'rating' => $req->rating, 'price' => $req->price, 'description' => $req->description, 'specification' => $req->specification, 'about' => $req->about, 'features' => $req->features, 'whats_in_the_box' => $req->whats_in_the_box, 'display' => $req->display, 'operating_system' => $req->operating_system, 'warranty' => $req->warranty, 'sku' => $req->sku, 'category' => $req->category, 'quantity' => $req->quantity, 'availablequantity' => $req->quantity, 'avatar' => $fileToStore]);
+              $execute = Products::where('id', $id)->where('merchant_id', $merchant_id[0]->id)->update(['name' => $req->name, 'rating' => $req->rating, 'price' => $req->price, 'description' => $req->description, 'specification' => $req->specification, 'about' => $req->about, 'features' => $req->features, 'whats_in_the_box' => $req->whats_in_the_box, 'display' => $req->display, 'operating_system' => $req->operating_system, 'warranty' => $req->warranty, 'sku' => $req->sku, 'category' => $req->category, 'quantity' => $req->quantity, 'availablequantity' => $req->quantity, 'avatar' => $data[0]]);
 
 
               if($execute == 1){
