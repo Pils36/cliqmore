@@ -110,11 +110,7 @@ Route::group(['prefix' => '/'], function(){
 		
 
 
-		// PAYSTACK PAY
-		Route::post('pay', ['uses' => 'api\v1\PaymentController@redirectToGateway']);
-
-		// CALLBACK
-		Route::get('payment/callback', ['uses' => 'api\v1\PaymentController@handleGatewayCallback']);
+		
 	
 		// Get Notification
 		Route::get('notification/{id}', ['uses' => 'api\v1\MerchantController@notification']);
@@ -185,6 +181,13 @@ Route::group(['prefix' => '/'], function(){
 	Route::post('admin/deletecategory/{id}',  ['uses' => 'api\v1\SuperAdminController@deleteCategory']);
 		
 	});
+
+
+	// PAYSTACK PAY
+		Route::post('pay', ['uses' => 'api\v1\PaymentController@redirectToGateway']);
+
+		// CALLBACK
+		Route::get('payment/callback', ['uses' => 'api\v1\PaymentController@handleGatewayCallback']);
 
 
 

@@ -163,7 +163,7 @@ class SuperAdminController extends Controller
 
     public function getallUsers(Request $req){
         
-        $getUser = User::orderBy('created_at', 'DESC')->get();
+        $getUser = User::where('usertype', 'customer')->orderBy('created_at', 'DESC')->get();
 
         if(count($getUser) > 0){
             $resData = ['data' => $getUser, 'message' => "success", 'status' => 200];
