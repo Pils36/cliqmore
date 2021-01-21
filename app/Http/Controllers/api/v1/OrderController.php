@@ -52,8 +52,9 @@ class OrderController extends Controller
     public function merchantOrder(Request $req, $id){
         
         $merchantOrders = DB::table('orders')
-                     ->select(DB::raw('products.id as productId, products.name as product_name, products.rating as rating, products.price as price, products.avatar as image, products.description as description, products.specification, products.about, products.features, products.whats_in_the_box, products.display, products.operating_system, products.warranty, products.sku, products.category, orders.id as orderId, orders.order_status as status, orders.quantity as quantity, orders.created_at'))
+                     ->select(DB::raw('products.id as productId, products.name as product_name, products.rating as rating, products.price as price, products.avatar as image, products.description as description, products.specification, products.about, products.features, products.whats_in_the_box, products.display, products.operating_system, products.warranty, products.sku, products.category, orders.id as orderId, orders.order_status as status, orders.quantity as quantity, orders.address, users.phone_number as phoneNumber, orders.created_at'))
                      ->join('products', 'products.id', '=', 'orders.product_id')
+                     ->join('users', 'users.user_id', '=', 'orders.user_id')
                      ->where('orders.merchant_id', $id)
                      ->orderBy('orders.created_at', 'DESC')->get();
 
