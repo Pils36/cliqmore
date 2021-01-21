@@ -21,9 +21,14 @@ class MySuperAdmin
 
             $user = \App\SuperAdmin::where('api_token', $token)->first();
 
-
             if(!$user){
-                return response()->json(['message' => 'Invalid Authorization Key'], 401);
+
+                $otheruser = \App\User::where('api_token', $token)->first();
+
+                if(!$otheruser){
+                    return response()->json(['message' => 'Invalid Authorization Key'], 401);
+                }
+
             }
 
         }
@@ -34,3 +39,4 @@ class MySuperAdmin
         return $next($request);
     }
 }
+

@@ -24,9 +24,14 @@ class Bearer
 
             $user = \App\User::where('api_token', $token)->first();
 
-
             if(!$user){
-                return response()->json(['message' => 'Invalid Authorization Key'], 401);
+
+                $otheruser = \App\SuperAdmin::where('api_token', $token)->first();
+
+                if(!$otheruser){
+                    return response()->json(['message' => 'Invalid Authorization Key'], 401);
+                }
+
             }
 
         }
