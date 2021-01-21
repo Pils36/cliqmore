@@ -30,17 +30,14 @@ Route::group(['prefix' => '/'], function(){
 
 	Route::post('passwordreset/{token}',  ['uses' => 'api\v1\UserController@changeresetPassword']);
 
+
+
+	// Auth Routes
+
+	Route::group(['middleware' => ['cliqmoretoken']], function () {
+		
+
 	Route::post('changepassword',  ['uses' => 'api\v1\UserController@changePassword']);
-
-
-
-	Route::post('admin/resetlink',  ['uses' => 'api\v1\SuperAdminController@resetLink']);
-
-	Route::post('admin/passwordreset/{token}',  ['uses' => 'api\v1\SuperAdminController@changeresetPassword']);
-
-	Route::post('admin/changepassword',  ['uses' => 'api\v1\SuperAdminController@changePassword']);
-
-
 
 	Route::post('updateprofile',  ['uses' => 'api\v1\UserController@updateUserinfo']);
 
@@ -59,16 +56,12 @@ Route::group(['prefix' => '/'], function(){
 
 	Route::get('user/{user_id}', ['uses' => 'api\v1\DashboardController@userinformation']);
 
-
-
 	Route::get('merchant/{user_id}', ['uses' => 'api\v1\DashboardController@merchantinformation']);
 
 	Route::post('merchant/updatebank/{user_id}', ['uses' => 'api\v1\DashboardController@merchantbankinformation']);
 
-
-
-
 	Route::get('cart/details/{id}', ['uses' => 'api\v1\CartController@cartDetails']);
+
 
 	Route::get('favourite/details/{id}', ['uses' => 'api\v1\CartController@favouriteDetails']);
 
@@ -86,8 +79,6 @@ Route::group(['prefix' => '/'], function(){
 
 	Route::post('removefromfavourite/{id}', ['uses' => 'api\v1\CartController@favouriteRemove']);
 
-
-
 	// Order Route
 	Route::get('orders/{user_id}', ['uses' => 'api\v1\OrderController@myOrders']);
 
@@ -102,6 +93,109 @@ Route::group(['prefix' => '/'], function(){
 	Route::post('products/update/{id}',  ['uses' => 'api\v1\ProductController@update']);
 
 	Route::post('products/{merchantID}',  ['uses' => 'api\v1\ProductController@create']);
+
+
+	// Merchant Routes
+	Route::post('merchants/{id}',  ['uses' => 'api\v1\MerchantController@update']);
+	Route::post('merchantimageupload/{id}',  ['uses' => 'api\v1\MerchantController@merchantUploadimage']);
+	Route::get('merchants',  ['uses' => 'api\v1\MerchantController@index']);
+	Route::get('merchants/{id}',  ['uses' => 'api\v1\MerchantController@fetch']);
+	Route::get('merchants/list/count',  ['uses' => 'api\v1\MerchantController@count']);
+
+
+	Route::get('merchants/totalavailableproducts/{merchant_id}',  ['uses' => 'api\v1\MerchantController@totalProduct']);
+	Route::get('merchants/totalsoldproducts/{merchant_id}',  ['uses' => 'api\v1\MerchantController@totalProductsold']);
+
+
+		
+
+
+		// PAYSTACK PAY
+		Route::post('pay', ['uses' => 'api\v1\PaymentController@redirectToGateway']);
+
+		// CALLBACK
+		Route::get('payment/callback', ['uses' => 'api\v1\PaymentController@handleGatewayCallback']);
+	
+		// Get Notification
+		Route::get('notification/{id}', ['uses' => 'api\v1\MerchantController@notification']);
+	
+	
+		Route::get('accountstatement/{id}', ['uses' => 'api\v1\MerchantController@accountStatement']);
+	
+	
+		// Rating
+		Route::post('product/rating', ['uses' => 'api\v1\ProductController@rateProducts']);
+	
+		
+	
+		// Bank Transactions and Money Transfers
+	
+
+	
+		Route::post('validateaccountnumber', ['uses' => 'api\v1\PaymentController@validateAccountNumber']);
+	
+		
+
+
+
+		
+	});
+
+
+	Route::group(['middleware' => ['superadmintoken']], function () {
+
+		// Super Admin Route
+
+		// Create Delivery fee
+		
+		Route::get('delivery/get', ['uses' => 'api\v1\SuperAdminController@getDeliveryfee']);
+		Route::post('delivery/create', ['uses' => 'api\v1\SuperAdminController@createDeliveryfee']);
+		Route::post('delivery/edit/{id}', ['uses' => 'api\v1\SuperAdminController@editDeliveryfee']);
+		Route::post('delivery/delete/{id}', ['uses' => 'api\v1\SuperAdminController@deleteDeliveryfee']);
+
+		// Transfer Money
+		Route::post('createrecipient', ['uses' => 'api\v1\SuperAdminController@transferRecipient']);
+	
+		Route::post('transfermoney/{id}', ['uses' => 'api\v1\SuperAdminController@transferMoney']);
+
+		Route::get('allorders',  ['uses' => 'api\v1\SuperAdminController@getallOrders']);
+		Route::get('allpayments',  ['uses' => 'api\v1\SuperAdminController@getallPayments']);
+		Route::get('merchantproducts',  ['uses' => 'api\v1\SuperAdminController@getallmerchantProducts']);
+		Route::post('accountdeativate/{id}',  ['uses' => 'api\v1\SuperAdminController@accountDeactivation']);
+		Route::post('accountactivate/{id}',  ['uses' => 'api\v1\SuperAdminController@accountActivation']);
+		Route::get('allusers',  ['uses' => 'api\v1\SuperAdminController@getallUsers']);
+		Route::get('allcustomers',  ['uses' => 'api\v1\SuperAdminController@getallcustomers']);
+		Route::get('allusersbystatus',  ['uses' => 'api\v1\SuperAdminController@getallUsersbystatus']);
+		Route::get('allmerchants',  ['uses' => 'api\v1\SuperAdminController@getallMerchants']);
+		Route::get('allmerchantsbystatus',  ['uses' => 'api\v1\SuperAdminController@getallMerchantsbystatus']);
+		Route::get('allsoldproducts',  ['uses' => 'api\v1\SuperAdminController@getallSoldproducts']);
+
+
+			// Update Order Status
+	Route::post('orderstatus/{id}',  ['uses' => 'api\v1\SuperAdminController@updateOrderstatus']);
+	Route::get('productoutofstock',  ['uses' => 'api\v1\SuperAdminController@outofStock']);
+	Route::get('merchantcount',  ['uses' => 'api\v1\SuperAdminController@allMerchantcount']);
+	Route::get('categorycount',  ['uses' => 'api\v1\SuperAdminController@allCategorycount']);
+
+
+	// Create admin
+	Route::post('admin/create',  ['uses' => 'api\v1\SuperAdminController@adminCreate']);
+	Route::post('admin/addcategory',  ['uses' => 'api\v1\SuperAdminController@addCategory']);
+	Route::post('admin/editcategory/{id}',  ['uses' => 'api\v1\SuperAdminController@editCategory']);
+	Route::post('admin/deletecategory/{id}',  ['uses' => 'api\v1\SuperAdminController@deleteCategory']);
+		
+	});
+
+
+
+
+	Route::post('admin/resetlink',  ['uses' => 'api\v1\SuperAdminController@resetLink']);
+
+	Route::post('admin/passwordreset/{token}',  ['uses' => 'api\v1\SuperAdminController@changeresetPassword']);
+
+	Route::post('admin/changepassword',  ['uses' => 'api\v1\SuperAdminController@changePassword']);
+
+
 
 	Route::get('products',  ['uses' => 'api\v1\ProductController@index']);
 
@@ -125,18 +219,7 @@ Route::group(['prefix' => '/'], function(){
 	Route::get('categories',  ['uses' => 'api\v1\ProductController@listCategories']);
 
 
-
-	// Merchant Routes
-	Route::post('merchants/{id}',  ['uses' => 'api\v1\MerchantController@update']);
-	Route::post('merchantimageupload/{id}',  ['uses' => 'api\v1\MerchantController@merchantUploadimage']);
-	Route::get('merchants',  ['uses' => 'api\v1\MerchantController@index']);
-	Route::get('merchants/{id}',  ['uses' => 'api\v1\MerchantController@fetch']);
-	Route::get('merchants/list/count',  ['uses' => 'api\v1\MerchantController@count']);
-
-
-	Route::get('merchants/totalavailableproducts/{merchant_id}',  ['uses' => 'api\v1\MerchantController@totalProduct']);
-	Route::get('merchants/totalsoldproducts/{merchant_id}',  ['uses' => 'api\v1\MerchantController@totalProductsold']);
-
+	
 	Route::get('searchmerchantproduct/{merchant_id}',  ['uses' => 'api\v1\MerchantController@search']);
 	Route::get('specificproduct/{merchant_id}',  ['uses' => 'api\v1\MerchantController@specificProduct']);
 	Route::get('merchantsales/{merchant_id}',  ['uses' => 'api\v1\MerchantController@getallSales']);
@@ -149,72 +232,17 @@ Route::group(['prefix' => '/'], function(){
 	// Route::post('merchants',  ['uses' => 'api\v1\MerchantController@create']);
 	// Route::delete('merchants/{id}',  ['uses' => 'api\v1\MerchantController@delete']);
 
+	Route::get('bankinformation', ['uses' => 'api\v1\PaymentController@saveBanks']);
+	
+	Route::get('allbanks', ['uses' => 'api\v1\PaymentController@getallBanks']);
 
 
-	// Super Admin Route
-
-	Route::get('allorders',  ['uses' => 'api\v1\SuperAdminController@getallOrders']);
-	Route::get('allpayments',  ['uses' => 'api\v1\SuperAdminController@getallPayments']);
-	Route::get('merchantproducts',  ['uses' => 'api\v1\SuperAdminController@getallmerchantProducts']);
-	Route::post('accountdeativate/{id}',  ['uses' => 'api\v1\SuperAdminController@accountDeactivation']);
-	Route::post('accountactivate/{id}',  ['uses' => 'api\v1\SuperAdminController@accountActivation']);
-	Route::get('allusers',  ['uses' => 'api\v1\SuperAdminController@getallUsers']);
-	Route::get('allcustomers',  ['uses' => 'api\v1\SuperAdminController@getallcustomers']);
-	Route::get('allusersbystatus',  ['uses' => 'api\v1\SuperAdminController@getallUsersbystatus']);
-	Route::get('allmerchants',  ['uses' => 'api\v1\SuperAdminController@getallMerchants']);
-	Route::get('allmerchantsbystatus',  ['uses' => 'api\v1\SuperAdminController@getallMerchantsbystatus']);
-	Route::get('allsoldproducts',  ['uses' => 'api\v1\SuperAdminController@getallSoldproducts']);
-
-	// Update Order Status
-	Route::post('orderstatus/{id}',  ['uses' => 'api\v1\SuperAdminController@updateOrderstatus']);
-	Route::get('productoutofstock',  ['uses' => 'api\v1\SuperAdminController@outofStock']);
-	Route::get('merchantcount',  ['uses' => 'api\v1\SuperAdminController@allMerchantcount']);
-	Route::get('categorycount',  ['uses' => 'api\v1\SuperAdminController@allCategorycount']);
 
 	// Admin login
 	Route::post('admin/login',  ['uses' => 'api\v1\UserController@adminLogin']);
-	// Create admin
-	Route::post('admin/create',  ['uses' => 'api\v1\SuperAdminController@adminCreate']);
-	Route::post('admin/addcategory',  ['uses' => 'api\v1\SuperAdminController@addCategory']);
-	Route::post('admin/editcategory/{id}',  ['uses' => 'api\v1\SuperAdminController@editCategory']);
-	Route::post('admin/deletecategory/{id}',  ['uses' => 'api\v1\SuperAdminController@deleteCategory']);
-
-
-	// PAYSTACK PAY
-	Route::post('pay', ['uses' => 'api\v1\PaymentController@redirectToGateway']);
-
-	// CALLBACK
-	Route::get('payment/callback', ['uses' => 'api\v1\PaymentController@handleGatewayCallback']);
-
-	// Get Notification
-	Route::get('notification/{id}', ['uses' => 'api\v1\MerchantController@notification']);
-
-
-	Route::get('accountstatement/{id}', ['uses' => 'api\v1\MerchantController@accountStatement']);
-
-
-	// Rating
-	Route::post('product/rating', ['uses' => 'api\v1\ProductController@rateProducts']);
-
-	// Create Delivery fee
 	
-	Route::get('delivery/get', ['uses' => 'api\v1\SuperAdminController@getDeliveryfee']);
-	Route::post('delivery/create', ['uses' => 'api\v1\SuperAdminController@createDeliveryfee']);
-	Route::post('delivery/edit/{id}', ['uses' => 'api\v1\SuperAdminController@editDeliveryfee']);
-	Route::post('delivery/delete/{id}', ['uses' => 'api\v1\SuperAdminController@deleteDeliveryfee']);
 
-	// Bank Transactions and Money Transfers
 
-	Route::get('bankinformation', ['uses' => 'api\v1\PaymentController@saveBanks']);
-
-	Route::get('allbanks', ['uses' => 'api\v1\PaymentController@getallBanks']);
-
-	Route::post('validateaccountnumber', ['uses' => 'api\v1\PaymentController@validateAccountNumber']);
-
-	// Transfer Money
-	Route::post('createrecipient', ['uses' => 'api\v1\SuperAdminController@transferRecipient']);
-
-	Route::post('transfermoney/{id}', ['uses' => 'api\v1\SuperAdminController@transferMoney']);
 });
 
 

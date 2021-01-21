@@ -164,13 +164,21 @@ class UserController extends Controller
     public function userLogin(Request $req){
 
 
-        $validator = Validator::make($req->all(), [
+        $validator = $req->validate([
             'email' => 'required|email',
             'password' => 'required',
         ]);
 
-        if($validator->passes()){
-            // $input = $req->only('email', 'password');
+
+
+        if(!Auth::attempt($validator)){
+                $code = 201;
+                $resData = ['message' => 'Invalid login credential', 'status' => $code];
+        }
+
+        else{
+
+            $token = Auth::user()->createToken('authToken')->accessToken;
 
             $getUser = User::where('email', $req->email)->get();
 
@@ -215,9 +223,10 @@ class UserController extends Controller
 
                 }
 
+                // Update User API Token
+                User::where('email', $req->email)->update(['api_token' => $token]);
 
-                // $token = Auth::user()->createToken('authToken')->accessToken;
-                $token = md5($req->email);
+
                 $resData = ['data' => $data, 'status' => $code, 'message' => $message, 'token' => $token];
 
             }
@@ -225,17 +234,11 @@ class UserController extends Controller
                 $code = 201;
                 $resData = ['message' => 'Invalid Username or Password', 'status' => $code];
             }
-
-
         }
-        else{
 
-            $error = implode(",",$validator->messages()->all());
 
-            // $resData = ['message' => $validator->errors(), 'status' => 201];
-            $resData = ['message' => $error, 'status' => 201];
-            $code = 201;
-        }
+
+
 
 
 
@@ -255,7 +258,7 @@ class UserController extends Controller
 
     // Super Admin Create and Login Auth
 
-    public function adminLogin(Request $req, Merchant $merchant){
+    public function adminLogin(Request $req){
         // Get Admin info
         $admin = SuperAdmin::where('username', $req->username)->orWhere('email', $req->username)->get();
 
@@ -263,8 +266,11 @@ class UserController extends Controller
             // Hash Password
             if(Hash::check($req->password, $admin[0]->password)){
                 // Login Successfully
-                $token = md5($req->username);
+                $token = md5($req->username).uniqid();
                 $status = 200;
+
+                SuperAdmin::where('username', $req->username)->orWhere('email', $req->username)->update(['api_token' => $token]);
+
                 $resData = ['data' => $admin, 'status' => $status, 'message' => 'Login successful', 'token' => $token];
             }
             else{

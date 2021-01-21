@@ -170,7 +170,6 @@ class ProductController extends Controller
     //Update product
     public function update(Request $req, $id){
 
-      dd($req->all());
 
       // Get Merchant
         $product = Products::where('id', $id)->get();
@@ -213,7 +212,7 @@ class ProductController extends Controller
                 }
 
 
-                if(count($req->previousImage) > 1){
+                if(count($req->previousImage) > 0){
 
                   foreach($req->previousImage as $key){
                     $addImage .= $key.",";
@@ -243,6 +242,7 @@ class ProductController extends Controller
           }
 
           
+          // dd($data[0]);
           
 
 
