@@ -56,7 +56,6 @@ Route::group(['prefix' => '/'], function(){
 
 	Route::get('user/{user_id}', ['uses' => 'api\v1\DashboardController@userinformation']);
 
-	Route::get('merchant/{user_id}', ['uses' => 'api\v1\DashboardController@merchantinformation']);
 
 	Route::post('merchant/updatebank/{user_id}', ['uses' => 'api\v1\DashboardController@merchantbankinformation']);
 
@@ -179,8 +178,13 @@ Route::group(['prefix' => '/'], function(){
 	Route::post('admin/addcategory',  ['uses' => 'api\v1\SuperAdminController@addCategory']);
 	Route::post('admin/editcategory/{id}',  ['uses' => 'api\v1\SuperAdminController@editCategory']);
 	Route::post('admin/deletecategory/{id}',  ['uses' => 'api\v1\SuperAdminController@deleteCategory']);
+	Route::post('admin/deletemanycategory',  ['uses' => 'api\v1\SuperAdminController@deleteManyCategory']);
 		
 	});
+
+
+	Route::get('merchant/{user_id}', ['uses' => 'api\v1\DashboardController@merchantinformation']);
+
 
 
 	// PAYSTACK PAY

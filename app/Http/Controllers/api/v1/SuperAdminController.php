@@ -145,8 +145,16 @@ class SuperAdminController extends Controller
         $getUser = User::where('id', $id)->get();
 
         if(count($getUser) > 0){
-            // Deactivate
-            User::where('id', $id)->update(['status' => 'activate']);
+
+            if($getUser[0]->usertype == "customer"){
+                User::where('id', $id)->update(['status' => 'activate']);
+
+            }
+            else{
+                User::where('id', $id)->update(['status' => 'activate']);
+                Merchant::where('merchant_id', $getUser[0]->user_id)->update(['status' => 'activate']);
+
+            }
 
             $resData = ['message' => "Account activated", 'status' => 200];
             $status = 200;
@@ -395,6 +403,30 @@ class SuperAdminController extends Controller
 
         $resData = ['message' => "Success", 'status' => 200];
         $status = 200;
+
+        return $this->returnJSON($resData, $status);
+
+    }
+
+
+    public function deleteManyCategory(Request $req, ProductCategory $category){
+
+
+        if(count($req->id) > 0){
+            foreach($req->id as $item){
+
+                $category->where('id', $item)->delete();
+        
+            }
+
+            $resData = ['message' => "Deleted", 'status' => 200];
+            $status = 200;
+        }
+        else{
+            $resData = ['message' => "Nothing selected", 'status' => 201];
+            $status = 201;
+        }
+        
 
         return $this->returnJSON($resData, $status);
 

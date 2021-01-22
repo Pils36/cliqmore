@@ -41,6 +41,9 @@ class UserController extends Controller
         ]);
 
         if($validator->passes()){
+
+            $token = md5($req->firstname).uniqid();
+
             if($req->usertype == "customer"){
 
                 // Check If email exist
@@ -58,10 +61,13 @@ class UserController extends Controller
                         'email' => $req->email,
                         'phone_number' => $req->phone_number,
                         'usertype' => $req->usertype,
+                        'api_token' => $token,
                         'password' => Hash::make($req->password),
                     ]);
 
-                    $resData = ['data' => $user, 'message' => 'Registration successful', 'status' => 200];
+                    
+
+                    $resData = ['data' => $user, 'message' => 'Registration successful', 'status' => 200, 'token' => $token];
                     $status = 200;
                 }
 
@@ -120,6 +126,7 @@ class UserController extends Controller
                         'email' => $req->email,
                         'phone_number' => $req->phone_number,
                         'usertype' => $req->usertype,
+                        'api_token' => $token,
                         'password' => Hash::make($req->password),
                     ]);
                 }
@@ -136,7 +143,7 @@ class UserController extends Controller
                     'avatar' => $avatar
                 ]);
 
-                $resData = ['data' => $user, 'message' => 'Registration successful', 'status' => 200];
+                $resData = ['data' => $user, 'message' => 'Registration successful', 'status' => 200, 'token' => $token];
                 $status = 200;
 
             }
