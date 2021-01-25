@@ -211,19 +211,29 @@ class ProductController extends Controller
 
                 }
 
+                if(isset($req->previousImage)){
 
-                if(count($req->previousImage) > 0){
+                  if(count($req->previousImage) > 0){
 
-                  foreach($req->previousImage as $key){
-                    $addImage .= $key.",";
+                    foreach($req->previousImage as $key){
+                      $addImage .= $key.",";
+                    }
+        
                   }
-      
+                  else{
+                    $addImage .= $req->previousImage.",";
+                  }
+
+                  $data []= $addImage.$fileToStore;
                 }
                 else{
-                  $addImage .= $req->previousImage.",";
+                  $data []= $fileToStore;
                 }
+
+
+                
       
-                $data []= $addImage.$fileToStore;
+                
 
 
     

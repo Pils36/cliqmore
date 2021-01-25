@@ -29,7 +29,7 @@ class SuperAdminController extends Controller
     public function getallOrders(Request $req){
 
         $allorders = DB::table('orders')
-                    ->select(DB::raw('users.id as userId, users.user_id, users.firstname, users.lastname, users.email, users.phone_number, products.id as productId, products.name as product_name, products.rating as rating, products.price as price, products.avatar as image, products.description as description, products.specification, products.about, products.features, products.whats_in_the_box, products.display, products.operating_system, products.warranty, products.sku, products.category, orders.order_status as status, orders.quantity as quantity, users.status as accountStatus, orders.id as orderId'))
+                    ->select(DB::raw('users.id as userId, users.user_id, users.firstname, users.lastname, users.email, users.phone_number, orders.address, products.id as productId, products.name as product_name, products.rating as rating, products.price as price, products.avatar as image, products.description as description, products.specification, products.about, products.features, products.whats_in_the_box, products.display, products.operating_system, products.warranty, products.sku, products.category, orders.order_status as status, orders.quantity as quantity, users.status as accountStatus, orders.id as orderId'))
                     ->join('users', 'users.user_id', '=', 'orders.user_id')
                     ->join('products', 'products.id', '=', 'orders.product_id')
                     ->orderBy('orders.created_at', 'DESC')->get();
