@@ -143,7 +143,6 @@ Route::group(['prefix' => '/'], function(){
 
 		// Create Delivery fee
 		
-		Route::get('delivery/get', ['uses' => 'api\v1\SuperAdminController@getDeliveryfee']);
 		Route::post('delivery/create', ['uses' => 'api\v1\SuperAdminController@createDeliveryfee']);
 		Route::post('delivery/edit/{id}', ['uses' => 'api\v1\SuperAdminController@editDeliveryfee']);
 		Route::post('delivery/delete/{id}', ['uses' => 'api\v1\SuperAdminController@deleteDeliveryfee']);
@@ -181,6 +180,9 @@ Route::group(['prefix' => '/'], function(){
 	Route::post('admin/deletemanycategory',  ['uses' => 'api\v1\SuperAdminController@deleteManyCategory']);
 		
 	});
+
+	Route::get('delivery/get', ['uses' => 'api\v1\SuperAdminController@getDeliveryfee']);
+
 
 
 	Route::get('merchant/{user_id}', ['uses' => 'api\v1\DashboardController@merchantinformation']);
