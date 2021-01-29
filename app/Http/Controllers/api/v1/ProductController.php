@@ -41,6 +41,25 @@ class ProductController extends Controller
         return $this->returnJSON($resData, $status);
     }
 
+
+    public function pageProducts(Request $req){
+        $data = Products::where('availablequantity', '>', 0)->orderBy('created_at', 'DESC')->paginate(20);
+
+        if(isset($data)){
+
+          $resData = ['data' => $data, 'message' => "Successfull", 'status' => 200];
+          $status = 200;
+        }
+        else{
+            $resData = ['message' => "No available products yet", 'status' => 201];
+            $status = 201;
+        }
+
+
+        
+        return $this->returnJSON($resData, $status);
+    }
+
     //Get this product
     public function fetch(Request $req, $id){
         $data = Products::where('id', $id)->orderBy('created_at', 'DESC')->get();
@@ -405,6 +424,55 @@ class ProductController extends Controller
                   'id' => $value->id,
                   'category' => $value->category,
                   'totalProduct' => 0
+                );
+              }
+
+              $data []= $result;
+
+          }
+
+
+          $resData = ['data' => $data, 'message' => "Success", 'status' => 200];
+          $status = 200;
+        } 
+        else {
+          $resData = ['message' => "No result found", 'status' => 201];
+          $status = 201;
+        }
+
+        return $this->returnJSON($resData, $status);
+    }
+
+
+
+    public function pageCategory(Request $req){
+
+      $allcategories = ProductCategory::orderBy('created_at', 'DESC')->get(['id', 'category']);
+
+
+      if (count($allcategories)) {
+
+          $data = [];
+          // Get products and category count
+          foreach($allcategories as $key => $value){
+              $getproducts = Products::select('id', 'category')->where('category', $value->category)->paginate(20);
+              
+
+              if(count($getproducts) > 0){
+                
+                $result = array(
+                  'id' => $value->id,
+                  'category' => $value->category,
+                  'totalProduct' => count($getproducts),
+                  'paginatedata' => $getproducts
+                );
+              }
+              else{
+                $result = array(
+                  'id' => $value->id,
+                  'category' => $value->category,
+                  'totalProduct' => 0,
+                  'paginatedata' => $getproducts
                 );
               }
 

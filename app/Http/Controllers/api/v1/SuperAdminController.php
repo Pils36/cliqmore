@@ -29,7 +29,7 @@ class SuperAdminController extends Controller
     public function getallOrders(Request $req){
 
         $allorders = DB::table('orders')
-                    ->select(DB::raw('users.id as userId, users.user_id, users.firstname, users.lastname, users.email, users.phone_number, orders.address, products.id as productId, products.name as product_name, products.rating as rating, products.price as price, products.avatar as image, products.description as description, products.specification, products.about, products.features, products.whats_in_the_box, products.display, products.operating_system, products.warranty, products.sku, products.category, orders.order_status as status, orders.quantity as quantity, users.status as accountStatus, orders.id as orderId'))
+                    ->select(DB::raw('users.id as userId, users.user_id, users.firstname, users.lastname, users.email, users.phone_number, orders.address, products.id as productId, products.name as product_name, products.rating as rating, products.price as price, products.avatar as image, products.description as description, products.specification, products.about, products.features, products.whats_in_the_box, products.display, products.operating_system, products.warranty, products.sku, products.category, orders.order_status as status, orders.quantity as quantity, users.status, orders.id as orderId'))
                     ->join('users', 'users.user_id', '=', 'orders.user_id')
                     ->join('products', 'products.id', '=', 'orders.product_id')
                     ->orderBy('orders.created_at', 'DESC')->get();
@@ -71,7 +71,7 @@ class SuperAdminController extends Controller
     public function getallPayments(Request $req){
 
         $allpayments = DB::table('payment')
-                    ->select(DB::raw('users.id as userId, users.user_id, users.firstname, users.lastname, users.email, users.phone_number, payment.id as paymentId, payment.transaction_id, payment.amount, products.id as productId, products.name as productName, products.avatar as image, products.description as description, products.specification, products.about, products.features, products.category,  users.status as accountStatus'))
+                    ->select(DB::raw('users.id as userId, users.user_id, users.firstname, users.lastname, users.email, users.phone_number, payment.id as paymentId, payment.transaction_id, payment.amount, products.id as productId, products.name as productName, products.avatar as image, products.description as description, products.specification, products.about, products.features, products.category,  users.status'))
                     ->join('users', 'users.email', '=', 'payment.customer_id')
                     ->join('products', 'products.id', '=', 'payment.product_id')
                     ->orderBy('payment.created_at', 'DESC')->get();
@@ -92,7 +92,7 @@ class SuperAdminController extends Controller
     public function getallmerchantProducts(Request $req){
 
         $allmerchantproducts = DB::table('products')
-                    ->select(DB::raw('merchants.id as merchantId, merchants.merchant_id as merchantuserId, merchants.firstname, merchants.lastname, users.user_id, users.email, users.phone_number, merchants.location as address, merchants.company, merchants.description, merchants.avatar as merchantLogo, merchants.bankname, merchants.accountnumber, merchants.wallet_amount, products.id as productId, products.name as productName, products.avatar as image, products.description as description, products.specification, products.about, products.features, products.category, products.quantity, products.availablequantity, users.status as accountStatus'))
+                    ->select(DB::raw('merchants.id as merchantId, merchants.merchant_id as merchantuserId, merchants.firstname, merchants.lastname, users.user_id, users.email, users.phone_number, merchants.location as address, merchants.company, merchants.description, merchants.avatar as merchantLogo, merchants.bankname, merchants.accountnumber, merchants.wallet_amount, products.id as productId, products.name as productName, products.avatar as image, products.description as description, products.specification, products.about, products.features, products.category, products.quantity, products.availablequantity, users.status'))
                     ->join('merchants', 'merchants.id', '=', 'products.merchant_id')
                     ->join('users', 'users.user_id', '=', 'merchants.merchant_id')
                     ->orderBy('merchants.created_at', 'DESC')->get();
@@ -205,7 +205,7 @@ class SuperAdminController extends Controller
     public function getallMerchants(Request $req){
 
         $getUser = DB::table('merchants')
-                ->select(DB::raw('merchants.id, merchants.merchant_id as merchantuserId, merchants.firstname, merchants.lastname, users.user_id, users.email, users.phone_number, merchants.location as address, merchants.company, merchants.description, merchants.avatar as merchantAvatar, merchants.logo as merchantLogo, users.status as accountStatus, merchants.bankname, merchants.accountnumber, merchants.wallet_amount'))
+                ->select(DB::raw('users.id as id, merchants.id as merchantId, merchants.merchant_id as merchantuserId, merchants.firstname, merchants.lastname, users.user_id, users.email, users.phone_number, merchants.location as address, merchants.company, merchants.description, merchants.avatar as merchantAvatar, merchants.logo as merchantLogo, users.status, merchants.bankname, merchants.accountnumber, merchants.wallet_amount'))
                 ->join('users', 'users.user_id', '=', 'merchants.merchant_id')
                 ->orderBy('merchants.created_at', 'DESC')->get();
 
@@ -285,7 +285,7 @@ class SuperAdminController extends Controller
     public function getallSoldproducts(Request $req){
 
         $getSold = DB::table('merchants')
-                ->select(DB::raw('merchants.id, merchants.merchant_id as merchantuserId, merchants.firstname, merchants.lastname, users.user_id, users.email, users.phone_number, merchants.location as address, merchants.company, merchants.description, merchants.avatar as merchantAvatar, merchants.logo as merchantLogo, merchants.bankname, merchants.accountnumber, merchants.wallet_amount, products.quantity as quantityUploaded, products.availablequantity as quantityAvailable, users.status as accountStatus, product_sale.product_id as soldproductId, product_sale.quantity as soldQuantity, products.avatar as productImage, products.name as productName, products.rating, products.price as productPrice, products.description, products.specification, products.about, products.features, products.category'))
+                ->select(DB::raw('merchants.id, merchants.merchant_id as merchantuserId, merchants.firstname, merchants.lastname, users.user_id, users.email, users.phone_number, merchants.location as address, merchants.company, merchants.description, merchants.avatar as merchantAvatar, merchants.logo as merchantLogo, merchants.bankname, merchants.accountnumber, merchants.wallet_amount, products.quantity as quantityUploaded, products.availablequantity as quantityAvailable, users.status, product_sale.product_id as soldproductId, product_sale.quantity as soldQuantity, products.avatar as productImage, products.name as productName, products.rating, products.price as productPrice, products.description, products.specification, products.about, products.features, products.category'))
                 ->join('users', 'users.user_id', '=', 'merchants.merchant_id')
                 ->join('products', 'products.merchant_id', '=', 'merchants.id')
                 ->join('product_sale', 'product_sale.product_id', '=', 'products.id')

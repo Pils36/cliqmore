@@ -208,6 +208,9 @@ Route::group(['prefix' => '/'], function(){
 
 	Route::get('products',  ['uses' => 'api\v1\ProductController@index']);
 
+
+	
+
 	Route::get('products/{id}',  ['uses' => 'api\v1\ProductController@fetch']);
 
 	Route::get('products/list/count',  ['uses' => 'api\v1\ProductController@countAll']);
@@ -227,6 +230,11 @@ Route::group(['prefix' => '/'], function(){
 	// List Product Categories
 	Route::get('categories',  ['uses' => 'api\v1\ProductController@listCategories']);
 
+
+
+	// Paginate Products and Category
+	Route::get('pageproducts',  ['uses' => 'api\v1\ProductController@pageProducts']);
+	Route::get('pagecategories',  ['uses' => 'api\v1\ProductController@pageCategory']);
 
 	
 	Route::get('searchmerchantproduct/{merchant_id}',  ['uses' => 'api\v1\MerchantController@search']);
