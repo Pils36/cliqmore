@@ -343,7 +343,7 @@ class MerchantController extends Controller
     public function merchantwithProduct(){
 
         $allmerchantproducts = DB::table('products')->distinct('merchants.id')
-                    ->select(DB::raw('merchants.id, merchants.merchant_id, merchants.firstname, merchants.lastname, merchants.location as address, merchants.company, merchants.description, merchants.avatar as merchantLogo, merchants.bankname, merchants.accountnumber'))
+                    ->select(DB::raw('merchants.id, merchants.merchant_id, merchants.firstname, merchants.lastname, merchants.location as address, merchants.company, merchants.description, merchants.logo as merchantLogo, merchants.avatar as merchantAvatar, merchants.bankname, merchants.accountnumber'))
                     ->join('merchants', 'merchants.id', '=', 'products.merchant_id')
                     ->orderBy('merchants.created_at', 'DESC')->get();
 
